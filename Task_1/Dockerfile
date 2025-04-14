@@ -1,4 +1,4 @@
-FROM python
+FROM python:slim
 RUN addgroup --system appgroup && adduser --system --ingroup appgroup appuser
 WORKDIR /app
 COPY requirements.txt .
