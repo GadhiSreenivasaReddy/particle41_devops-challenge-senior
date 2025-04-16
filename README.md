@@ -17,4 +17,4 @@ The challenge and related tasks can be found at the following URL:
 ### Setup
 1. Clone the repository:
    ```bash
-   git clone https://bitbucket.org/particle41/devops-challenge-senior.git
+   git clone https://github.com/GadhiSreenivasaReddy/particle41_devops-challenge-senior.git
