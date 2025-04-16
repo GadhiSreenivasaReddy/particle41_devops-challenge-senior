@@ -1,52 +1,107 @@
-module "iam" {
-        source = "./modules/iam"
-        default_tags = var.default_tags
+# VPC
+resource "aws_vpc" "vpc_gsr" {
+  cidr_block = var.cidr_block
+  tags = merge(
+    var.default_tags,
+    {
+      Name = "GSR_vpc"
+    }
+  )
 }
 
-module "cloudwatch" {
-        source = "./modules/cloudwatch"
-        default_tags = var.default_tags
-        logs_retention_days = var.logs_retention_days
-        cloudwatchloggroupname = var.cloudwatchloggroupname
+# Fetch available availability zones
+data "aws_availability_zones" "available_az" {
+  state = "available"
 }
-module "vpc" {
-        source = "./modules/vpc"
-        default_tags = var.default_tags
-        cidr_block = var.cidr_block  
+
+# Public subnets
+resource "aws_subnet" "subnet_public" {
+  count                   = 2
+  vpc_id                  = aws_vpc.vpc_gsr.id
+  cidr_block              = cidrsubnet(var.cidr_block, 8, count.index)
+  map_public_ip_on_launch = true
+  availability_zone       = data.aws_availability_zones.available_az.names[count.index]
+
+  tags = merge(
+    var.default_tags,
+    {
+      Name = "subnet-public-${count.index + 1}"
+    }
+  )
 }
-module "sg" {
-        source = "./modules/sg"
-        default_tag = var.default_tags
-        vpc_id = module.vpc.vpc_id
-        securitygroup_name = var.securitygroup_name
+
+# Internet Gateway (IGW)
+resource "aws_internet_gateway" "igw_public" {
+  vpc_id = aws_vpc.vpc_gsr.id
+  tags = merge(
+    var.default_tags,
+    {
+      Name = "igw-public"
+    }
+  )
 }
-module "ecs" {
-        source = "./modules/ecs"
-        ecs_service_name = var.ecs_service_name
-        ecs_service_desired_count = var.ecs_service_desired_count
-        ecs_execution_role_arn = module.iam.aws_iam_role
-        container_name = var.container_name
-        docker_image = var.docker_image
-        container_cpu = var.container_cpu
-        container_memory = var.container_memory
-        containerPort = var.containerPort
-        hostPort = var.hostPort
-        default_tag = var.default_tags
-        ecs_cluster_name = var.ecs_cluster_name
-        cloud_watch_log_group_name = module.cloudwatch.cloudwatch_log_group_name
-        subnets = module.vpc.public_subnet_ids[*]
-        alb_security_group_id = [module.sg.aws_security_group_id]
-        task_cpu = var.task_cpu
-        task_memory = var.task_memory
-        target_group_arn = module.alb.aws_lb_target_group_arn
-        region = var.region
+
+# Public Route Table
+resource "aws_route_table" "route_table_public" {
+  vpc_id = aws_vpc.vpc_gsr.id
+  tags = merge(
+    var.default_tags,
+    {
+      Name = "route-table-public"
+    }
+  )
 }
-module "alb" {
-        source = "./modules/alb"
-        alb_name = var.alb_name
-        public_subnet_ids = module.vpc.public_subnet_ids[*]
-        vpc_id = module.vpc.vpc_id
-        security_group_id_alb = module.sg.aws_security_group_id
-        alb_tg_name = var.alb_tg_name  
-        default_tag = var.default_tags
+
+# Add public route to public route table
+resource "aws_route" "route_public" {
+  route_table_id         = aws_route_table.route_table_public.id
+  destination_cidr_block = "0.0.0.0/0"
+  gateway_id             = aws_internet_gateway.igw_public.id
+}
+
+# Associate public subnets with public route table
+resource "aws_route_table_association" "association_public" {
+  for_each = {
+    subnet1 = aws_subnet.subnet_public[0].id
+    subnet2 = aws_subnet.subnet_public[1].id
+  }
+  subnet_id      = each.value
+  route_table_id = aws_route_table.route_table_public.id
+}
+
+# Private subnets
+resource "aws_subnet" "subnet_private" {
+  count             = 2
+  vpc_id            = aws_vpc.vpc_gsr.id
+  cidr_block        = cidrsubnet(var.cidr_block, 8, count.index + 2)
+  availability_zone = data.aws_availability_zones.available_az.names[count.index]
+
+  tags = merge(
+    var.default_tags,
+    {
+      Name = "subnet-private-${count.index + 1}"
+    }
+  )
+}
+
+# Private Route Table
+resource "aws_route_table" "route_table_private" {
+  vpc_id = aws_vpc.vpc_gsr.id
+
+  tags = merge(
+    var.default_tags,
+    {
+      Name = "route-table-private"
+    }
+  )
+}
+
+# Associate private subnets with private route table
+resource "aws_route_table_association" "association_private" {
+  for_each = {
+    subnet1 = aws_subnet.subnet_private[0].id
+    subnet2 = aws_subnet.subnet_private[1].id
+  }
+  subnet_id      = each.value
+  route_table_id = aws_route_table.route_table_private.id
 }
