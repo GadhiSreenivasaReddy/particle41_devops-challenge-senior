@@ -1,39 +1,34 @@
-# 🚀 AWS Infrastructure with Terraform
+# Terraform Project - Modular Format
 
-This project sets up AWS infrastructure using Terraform with a modular approach. It provisions key AWS resources such as VPC, ECS Cluster, Application Load Balancer (ALB), IAM roles, CloudWatch configurations, and Security Groups.
----
+This project follows a modular format to manage your infrastructure effectively using Terraform.
 
-## 📁 Project Structure
+## Steps to Run this Project
 
-```bash
-├── README.md
-├── main.tf
-├── modules
-│   ├── alb
-│   │   ├── main.tf
-│   │   ├── output.tf
-│   │   └── variables.tf
-│   ├── cloudwatch
-│   │   ├── main.tf
-│   │   ├── output.tf
-│   │   └── variables.tf
-│   ├── ecs
-│   │   ├── main.tf
-│   │   ├── output.tf
-│   │   └── variables.tf
-│   ├── iam
-│   │   ├── main.tf
-│   │   ├── output.tf
-│   │   └── variables.tf
-│   ├── sg
-│   │   ├── main.tf
-│   │   ├── output.tf
-│   │   └── variables.tf
-│   └── vpc
-│       ├── main.tf
-│       ├── output.tf
-│       └── variables.tf
-├── output.tf
-├── providers.tf
-├── terraform.tfvars
-└── variables.tf
+### Prerequisites
+Ensure the following tools are installed and properly configured:
+- AWS CLI
+- GitHub
+- Terraform
+
+### Instructions
+1. Clone the current repository.
+
+2. Navigate to the Terraform directory by moving into the folder named `terraform`.
+ ```
+ cd ./terraform
+```
+3. Review and update the variables in the `terraform.tfvars` to match your specific requirements.
+
+4. To validate the Terraform plan, use the `terraform plan` command and specify the `terraform.tfvars` file.
+```
+terraform plan -var-file="terraform.tfvars"
+```
+
+5. To apply or execute the Terraform plan, use the `terraform apply` command and specify the `terraform.tfvars` file.
+```
+terraform apply -var-file="terraform.tfvars"
+```
+6. To destroy the infrastructure, use the `terraform destroy` command and specify the `terraform.tfvars` file.
+```
+terraform destroy -var-file="terraform.tfvars"
+```
