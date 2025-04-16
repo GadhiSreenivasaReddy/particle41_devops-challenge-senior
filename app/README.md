@@ -5,20 +5,21 @@ The instructions provided outline two methods for working with a Docker image:
    ```
    docker pull gadhisreenivasareddy/simpletimeservice:v1
    ```
+    ```
+   docker run -d -p 9593:5000 gadhisreenivasareddy/simpletimeservice:v1
+   ```
 
 2. **Build the image locally**:
    Use the following steps:
-   - Clone the repository:
-     ```
-     git clone <repository_url>
-     ```
    - Navigate into the directory:
      ```
      cd ./app
      ```
    - Build the Docker image locally with a chosen name and tag:
      ```
-     docker build -t <imageName:tag> .
+     docker build -t SimpleTimeService:v1 .
      ```
-
-This approach is useful if you want to customize the Docker image or inspect its contents.
+   - Run the Docker container locally with a newly created docker image:
+    ```
+     docker run -d -p 9593:5000 SimpleTimeService:v1 .
+     ```
