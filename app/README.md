@@ -14,7 +14,7 @@ The instructions provided outline two methods for working with a Docker image:
      ```
    - Navigate into the directory:
      ```
-     cd ./Task_1
+     cd ./app
      ```
    - Build the Docker image locally with a chosen name and tag:
      ```
