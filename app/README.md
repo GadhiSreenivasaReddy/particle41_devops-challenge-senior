@@ -23,9 +23,9 @@ The instructions provided outline two methods for working with a Docker image:
      docker build -t SimpleTimeService:v1 .
      ```
    - Run the Docker container locally with a newly created docker image:
-    ```
-     docker run -d -p 9593:5000 SimpleTimeService:v1 .
-     ```
-    ```
-      http://localhost:9593/
-    ```
+      ```
+      docker run -d -p 9593:5000 SimpleTimeService:v1 .
+      ```
+      ```
+        http://localhost:9593/
+      ```
