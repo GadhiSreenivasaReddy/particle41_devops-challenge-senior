@@ -8,6 +8,9 @@ The instructions provided outline two methods for working with a Docker image:
     ```
    docker run -d -p 9593:5000 gadhisreenivasareddy/simpletimeservice:v1
    ```
+    ```
+      http://localhost:9593/
+    ```
 
 2. **Build the image locally**:
    Use the following steps:
@@ -23,3 +26,6 @@ The instructions provided outline two methods for working with a Docker image:
     ```
      docker run -d -p 9593:5000 SimpleTimeService:v1 .
      ```
+    ```
+      http://localhost:9593/
+    ```
