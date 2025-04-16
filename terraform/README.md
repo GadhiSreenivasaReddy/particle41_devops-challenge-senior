@@ -19,6 +19,8 @@ Ensure the following tools are installed and properly configured:
 ```
 3. Review and update the variables in the `terraform.tfvars` to match your specific requirements.
 
+4. Review the `providers.tf` in the backend s3 you need to provide the bucketname and region
+
 4. To validate the Terraform plan, use the `terraform plan` command and specify the `terraform.tfvars` file.
 ```
 terraform plan -var-file="terraform.tfvars"
